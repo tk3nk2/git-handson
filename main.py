@@ -34,7 +34,11 @@ def save_tasks(tasks):
 
 
 def status_change(tasks: list[dict], id: int, status: bool):
-    """IDで指定されたタスクのcompletedをstatusに書き換えて上書き保存する"""
+    """
+    IDで指定されたタスクのcompletedをstatusに書き換えて上書き保存する
+    成功した場合は書き換えたタスクのインデックスを返す
+    IDが存在しない場合は-1を返す
+    """
     for i in range(len(tasks)):
         if tasks[i]["id"] == id:
             tasks[i]["completed"] = status
