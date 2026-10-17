@@ -81,6 +81,15 @@ def list():
     console.print(table)
 
 
+# === 製造実績 ===
+def load_dummy_production(input=Path("data/dummy_productions.json")):
+    if not input.exists():
+        print("JSONファイルが見つかりませんでした")
+        return
+
+    with open(input, "r", encoding="utf-8") as f:
+        return json.load(f)
+    
 
 @app.command()
 def generate(
@@ -90,7 +99,7 @@ def generate(
     """
     ダミーの製造実績を生成し、JSONファイルに保存する
     
-    Example: python main.py generate --output "data/dummy.jdon" --count 20
+    Example: python main.py generate --output "data/dummy_productions.json" --count 20
     """
     data = [production_record.production_record(i) for i in range(count)]
 
@@ -101,23 +110,65 @@ def generate(
 
 
 @app.command()
-def display(
-    input: Path=typer.Option("data/dummy_productions.json", help="リスト表示するJSONのファイルパス"),
-    limit: Optional[int]=typer.Option(None, help="表示する件数")
-):
+def display(limit: Optional[int]=typer.Option(None, help="表示する件数")):
     """
     指定したJSONファイルから製造実績の一覧を表示する
     
-    Example: python main.py display --input data/dummy_productions.json --limit 10
+    Example: python main.py display --limit 10
     """
-    if not input.exists():
-        print("JSONファイルが見つかりませんでした")
-        return
-        
-    with open(input, "r") as f:
-        data = json.load(f)
 
+    data = load_dummy_production()
     display_records.display_records(data, limit)
+
+
+@app.command()
+def sort(limit: Optional[int]=typer.Option(None, help="表示する件数")):
+    """
+    start_timeまたはend_timeでソートした製造実績の一覧を表示する
+
+    Example: python main.py sort --limit 10
+    """
+    data = load_dummy_production()
+
+    print("ソートする項目を選択してください")
+    print("1. start_time")
+    print("2. end_time")
+
+    while True:
+        sort_item = input("選択：")
+
+        if sort_item == "1":
+            sort_key = "start_time"
+            break
+
+        elif sort_item == "2":
+            sort_key = "end_time"
+            break
+
+        else:
+            print("1または2を入力してください")
+
+    print("ソートする方法を選択してください")
+    print("1. 昇順")
+    print("2. 降順")
+
+    while True:
+        sort_direction = input("選択：")
+
+        if sort_direction == "1":
+            descending = False
+            break
+
+        elif sort_direction == "2":
+            descending = True
+            break
+
+        else:
+            print("1または2を選択してください")
+
+    sorted_records = sorted(data, key=lambda record: record[sort_key], reverse=descending)
+
+    display_records.display_records(sorted_records, limit)
 
 
 if __name__ == "__main__":
