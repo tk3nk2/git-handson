@@ -101,7 +101,7 @@ def complete(
     """
     タスクのIDを指定して、完了状態にする
     
-    Exsample: python main.py complete 1
+    Example: python main.py complete 1
     """
     tasks = load_tasks()
     result = status_change(tasks, id, True)
@@ -118,7 +118,7 @@ def reopen(
     """
     タスクのIDを指定して、未完了にする
     
-    Exsample: python main.py reopen 1
+    Example: python main.py reopen 1
     """
     tasks = load_tasks()
     result = status_change(tasks, id, False)
