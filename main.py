@@ -1,9 +1,5 @@
 import typer
-<<<<<<< HEAD
-=======
 from typing import Optional
-from pathlib import Path
->>>>>>> c4f0aae (add display_productions command)
 import json
 from pathlib import Path
 from rich.console import Console
@@ -87,14 +83,14 @@ def list():
 
 
 @app.command()
-def dummy_production_data(
+def generate(
     output: Path=typer.Option("data/dummy_productions.json", help="保存先のJSONのファイルパス"), 
     count: int=typer.Option(10, help="生成するレコード件数")
     ):
     """
     ダミーの製造実績を生成し、JSONファイルに保存する
     
-    Example: python main.py dummy-production-data --output-path "data/dummy.jdon" --count 4
+    Example: python main.py generate --output "data/dummy.jdon" --count 20
     """
     data = [production_record.production_record(i) for i in range(count)]
 
@@ -105,15 +101,19 @@ def dummy_production_data(
 
 
 @app.command()
-def display_productions(
+def display(
     input: Path=typer.Option("data/dummy_productions.json", help="リスト表示するJSONのファイルパス"),
     limit: Optional[int]=typer.Option(None, help="表示する件数")
 ):
     """
     指定したJSONファイルから製造実績の一覧を表示する
     
-    Example: 
+    Example: python main.py display --input data/dummy_productions.json --limit 10
     """
+    if not input.exists():
+        print("JSONファイルが見つかりませんでした")
+        return
+        
     with open(input, "r") as f:
         data = json.load(f)
 
