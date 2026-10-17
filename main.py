@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
+from faker import Faker
 import production_record
 import display_records
 
@@ -80,6 +81,21 @@ def list():
     console = Console()
     console.print(table)
 
+@app.command()
+def complete(
+    id: int=typer.Argument(help="完了にするタスクのID")
+):
+    """
+    タスクのIDを指定して、完了状態にする
+    
+    Example: python main.py complete 1
+    """
+    tasks = load_tasks()
+    result = status_change(tasks, id, True)
+    if result == -1:
+        print("指定したIDは無効です")
+    else:
+        list()
 
 # === 製造実績 ===
 def load_dummy_production(input=Path("data/dummy_productions.json")):
@@ -90,6 +106,38 @@ def load_dummy_production(input=Path("data/dummy_productions.json")):
     with open(input, "r", encoding="utf-8") as f:
         return json.load(f)
     
+
+@app.command()
+def reopen(
+    id: int=typer.Argument(help="未完了にするタスクのID")
+):
+    """
+    タスクのIDを指定して、未完了にする
+    
+    Example: python main.py reopen 1
+    """
+    tasks = load_tasks()
+    result = status_change(tasks, id, False)
+    if result == -1:
+        print("指定したIDは無効です")
+    else:
+        list()
+        
+@app.command()
+def fake_task(
+    count: int=typer.Argument(help="ダミーの件数")
+):
+    """
+    指定した件数のダミーのタスクを追加する
+
+    Example: python main.py fake-task 10
+    """
+    fake = Faker("ja_JP")
+    for i in range(count):
+        add(fake.sentence(2))
+        
+
+# === 製造実績 ===
 
 @app.command()
 def generate(
