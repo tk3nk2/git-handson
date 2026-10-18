@@ -33,6 +33,20 @@ def save_tasks(tasks):
         json.dump(tasks, f, ensure_ascii=False, indent=4)
 
 
+def status_change(tasks: list[dict], id: int, status: bool):
+    """
+    IDで指定されたタスクのcompletedをstatusに書き換えて上書き保存する
+    成功した場合は書き換えたタスクのインデックスを返す
+    IDが存在しない場合は-1を返す
+    """
+    for i in range(len(tasks)):
+        if tasks[i]["id"] == id:
+            tasks[i]["completed"] = status
+            save_tasks(tasks)
+            return i
+    return -1
+
+
 @app.command()
 def add(title: str=typer.Argument(help="タスク名")):
     """
@@ -80,6 +94,21 @@ def list():
     console = Console()
     console.print(table)
 
+@app.command()
+def complete(
+    id: int=typer.Argument(help="完了にするタスクのID")
+):
+    """
+    タスクのIDを指定して、完了状態にする
+    
+    Example: python main.py complete 1
+    """
+    tasks = load_tasks()
+    result = status_change(tasks, id, True)
+    if result == -1:
+        print("指定したIDは無効です")
+    else:
+        list()
 
 # === 製造実績 ===
 def load_dummy_production(input=Path("data/dummy_productions.json")):
@@ -90,6 +119,25 @@ def load_dummy_production(input=Path("data/dummy_productions.json")):
     with open(input, "r", encoding="utf-8") as f:
         return json.load(f)
     
+
+@app.command()
+def reopen(
+    id: int=typer.Argument(help="未完了にするタスクのID")
+):
+    """
+    タスクのIDを指定して、未完了にする
+    
+    Example: python main.py reopen 1
+    """
+    tasks = load_tasks()
+    result = status_change(tasks, id, False)
+    if result == -1:
+        print("指定したIDは無効です")
+    else:
+        list()
+        
+
+# === 製造実績 ===
 
 @app.command()
 def generate(
