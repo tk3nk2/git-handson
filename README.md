@@ -201,3 +201,5 @@ data/tasks.json
 - Typer
 - Rich
 - Faker
+- pyfiglet
+- qrcode
