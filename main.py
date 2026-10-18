@@ -188,7 +188,7 @@ def delete(
         return
 
     if completed is not None:
-        remain_tasks = [task for task in tasks if task["completed"] != True]
+        remain_tasks = [task for task in tasks if task["completed"] != completed]
         delete_count = len(tasks) - len(remain_tasks)
 
         save_tasks(remain_tasks)
