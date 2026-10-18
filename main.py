@@ -7,6 +7,8 @@ from rich.table import Table
 from faker import Faker
 import production_record
 import display_records
+import qrcode
+import pyfiglet
 
 app = typer.Typer()
 file_path = Path("data/tasks.json")
@@ -288,5 +290,27 @@ def sort(limit: Optional[int]=typer.Option(None, help="表示する件数")):
     display_records.display_records(sorted_records, limit)
 
 
+@app.command()
+def qr(
+    id: int=typer.Argument(help="製造実績一覧の中から、指定したIDのproduct_codeをQRコードにして画面に表示します"),
+    file: Path=typer.Option("data/dummy_productions.json", help="製造実績のファイルパス")
+):
+    """
+    製造実績一覧の中から、指定したIDのproduct_codeをQRコードにして画面に表示します 
+
+    Example: python main.py qr 3
+    """
+    data = load_dummy_production(file)
+
+    for record in data:
+        if record["record_id"] == id:
+            print(pyfiglet.figlet_format("QRCode"))
+            qrc = qrcode.QRCode()
+            qrc.add_data(record["product_code"])
+            qrc.print_ascii()
+            display_records.display_records([record], 1)
+
+
+    
 if __name__ == "__main__":
     app()
