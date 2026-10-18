@@ -119,7 +119,7 @@ python main.py fake-task 10
 指定した件数のダミー製造実績を生成します。
 
 ```bash
-python main.py generate --output "data/dummy_productions.json" --count 20
+python main.py generate --count 20
 ```
 
 
