@@ -51,6 +51,7 @@ def status_change(tasks: list[dict], id: int, status: bool):
 def add(title: str=typer.Argument(help="タスク名")):
     """
     新規タスクをtasks.jsonに追加する
+
     Example: python main.py add "task 1"
     """
     tasks = load_tasks()
@@ -69,12 +70,28 @@ def add(title: str=typer.Argument(help="タスク名")):
 
 
 @app.command()
-def list():
+def list(
+    limit: Optional[int]=typer.Option(None, help="表示する件数"),
+    completed : Optional[bool]=typer.Option(None, "--completed/--no-completed", help="状態で絞り込み")
+): 
     """
-    保存されているタスクを一覧表示する
-    Example: python main.py list
+    保存されているタスクを一覧表示する。
+
+    --limitで表示件数を指定できる。
+    --completedまたは--no-completedで完了状態を絞り込める。
+    オプションを省略した場合は、全タスクを表示する。
+
+    Exampls:
+        python main.py list
+        python main.py list --limit 3
+        python main.py list --completed
+        python main.py list --no-completed
+        python main.py list --completed --limit 3
     """
     tasks = load_tasks()
+
+    if completed is not None:
+        tasks = [task for task in tasks if task["completed"] == completed]
 
     if len(tasks) == 0:
         print("登録されているタスクはありません。")
@@ -86,13 +103,14 @@ def list():
     table.add_column("タスク名", style="cyan")
     table.add_column("状態", style="green")
 
-    for task in tasks:
+    for task in tasks[:limit]:
         status = "完了" if task["completed"] else "未完了"
 
         table.add_row(str(task["id"]), task["title"], status)
 
     console = Console()
     console.print(table)
+
 
 @app.command()
 def complete(
@@ -108,17 +126,8 @@ def complete(
     if result == -1:
         print("指定したIDは無効です")
     else:
-        list()
+        list(limit=None, completed=None)
 
-# === 製造実績 ===
-def load_dummy_production(input=Path("data/dummy_productions.json")):
-    if not input.exists():
-        print("JSONファイルが見つかりませんでした")
-        return
-
-    with open(input, "r", encoding="utf-8") as f:
-        return json.load(f)
-    
 
 @app.command()
 def reopen(
@@ -134,10 +143,18 @@ def reopen(
     if result == -1:
         print("指定したIDは無効です")
     else:
-        list()
+        list(limit=None, completed=None)
         
 
 # === 製造実績 ===
+def load_dummy_production(input=Path("data/dummy_productions.json")):
+    if not input.exists():
+        print("JSONファイルが見つかりませんでした")
+        return
+
+    with open(input, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 
 @app.command()
 def generate(
