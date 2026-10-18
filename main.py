@@ -49,11 +49,12 @@ def status_change(tasks: list[dict], id: int, status: bool):
 
 
 @app.command()
-def add(title: str=typer.Argument(help="タスク名")):
+def add(title: str = typer.Argument(help = "タスク名")):
     """
     新規タスクをtasks.jsonに追加する
 
-    Example: python main.py add "task 1"
+    Example:
+        python main.py add "task-name"
     """
     tasks = load_tasks()
 
@@ -112,30 +113,14 @@ def list(
     console = Console()
     console.print(table)
 
-@app.command()
-def complete(
-    id: int=typer.Argument(help="完了にするタスクのID")
-):
-    """
-    タスクのIDを指定して、完了状態にする
-    
-    Example: python main.py complete 1
-    """
-    tasks = load_tasks()
-    result = status_change(tasks, id, True)
-    if result == -1:
-        print("指定したIDは無効です")
-    else:
-        list()
 
 @app.command()
-def complete(
-    id: int=typer.Argument(help="完了にするタスクのID")
-):
+def complete(id: int=typer.Argument(help="完了にするタスクのID")):
     """
     タスクのIDを指定して、完了状態にする
     
-    Example: python main.py complete 1
+    Example: 
+        python main.py complete 1
     """
     tasks = load_tasks()
     result = status_change(tasks, id, True)
@@ -146,13 +131,12 @@ def complete(
 
 
 @app.command()
-def reopen(
-    id: int=typer.Argument(help="未完了にするタスクのID")
-):
+def reopen(id: int=typer.Argument(help="未完了にするタスクのID")):
     """
     タスクのIDを指定して、未完了にする
     
-    Example: python main.py reopen 1
+    Example:
+        python main.py reopen 1
     """
     tasks = load_tasks()
     result = status_change(tasks, id, False)
@@ -160,7 +144,59 @@ def reopen(
         print("指定したIDは無効です")
     else:
         list(limit=None, completed=None)
+
         
+@app.command()
+def fake_task(count: int=typer.Argument(help="ダミーの件数")):
+    """
+    指定した件数のダミーのタスクを追加する
+
+    Example: 
+        python main.py fake-task 10
+    """
+    fake = Faker("ja_JP")
+    for i in range(count):
+        add(fake.sentence(2))
+
+
+@app.command()
+def delete(
+    id: Optional[int]=typer.Argument(None, help="IDを指定して削除"),
+    completed: Optional[bool]=typer.Option(None, "--completed/--no-completed", help="状態を指定して一括削除")
+):
+    """
+    IDを指定した場合は、該当するタスクを削除する
+    --completedを指定した場合は、完了済みのタスクを一括削除する
+    --no-completedを指定した場合は、未完了のタスクを一括削除する
+
+    Example:
+        python main.py delete 1
+        python main.py delete --completed
+        python main.py delete --no-completed
+    """
+    tasks = load_tasks()
+
+    if id is not None:
+        for task in tasks:
+            if task["id"] == id:
+                tasks.remove(task)
+                save_tasks(tasks)
+                print(f"ID: {id} のタスクを削除しました。")
+                return
+
+        print("指定したIDは無効です。")
+        return
+
+    if completed is not None:
+        remain_tasks = [task for task in tasks if task["completed"] != True]
+        delete_count = len(tasks) - len(remain_tasks)
+
+        save_tasks(remain_tasks)
+        print(f"{delete_count}件のタスクを削除しました。")
+        return
+
+    print("削除するタスクのIDまたは状態を指定してください")
+
 
 # === 製造実績 ===
 def load_dummy_production(input=Path("data/dummy_productions.json")):
@@ -170,39 +206,7 @@ def load_dummy_production(input=Path("data/dummy_productions.json")):
 
     with open(input, "r", encoding="utf-8") as f:
         return json.load(f)
-
-
-@app.command()
-def reopen(
-    id: int=typer.Argument(help="未完了にするタスクのID")
-):
-    """
-    タスクのIDを指定して、未完了にする
     
-    Example: python main.py reopen 1
-    """
-    tasks = load_tasks()
-    result = status_change(tasks, id, False)
-    if result == -1:
-        print("指定したIDは無効です")
-    else:
-        list()
-        
-@app.command()
-def fake_task(
-    count: int=typer.Argument(help="ダミーの件数")
-):
-    """
-    指定した件数のダミーのタスクを追加する
-
-    Example: python main.py fake-task 10
-    """
-    fake = Faker("ja_JP")
-    for i in range(count):
-        add(fake.sentence(2))
-        
-
-# === 製造実績 ===
 
 @app.command()
 def generate(
