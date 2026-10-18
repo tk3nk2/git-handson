@@ -24,11 +24,17 @@ pip install -r requirements.txt
 `reopen`<br>
 完了済みタスクを未完了に戻します
 
+`fake-task`<br>
+指定した件数のダミーのタスクを追加します
+
 `generate`<br>
 製造実績のダミーデータを生成します
 
 `display`<br>
 製造実績一覧を表示します
+
+`qr`<br>
+製造実績の中から、指定したIDの製品コードをQRコードで表示します
 
 
 ## 使用例
@@ -44,8 +50,14 @@ IDが1のタスクを完了状態にする<br>
 IDが1のタスクを未完了にする<br>
 `python main.py reopen 1`
 
+ダミーのタスクを2件追加する<br>
+`python main.py fake-task 2`
+
 ダミーの製造実績20件を生成し、JSONファイルに保存する<br>
 `python main.py generate --output "data/dummy.jdon" --count 20`
 
 指定したJSONファイルから製造実績の一覧を最大10件表示する<br>
 `python main.py display --input data/dummy_productions.json --limit 10`
+
+製造実績のIDが5の製品の製品コードをQRコードで表示する<br>
+`python main.py qr 5`
