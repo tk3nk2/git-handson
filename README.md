@@ -21,6 +21,12 @@ cd git-handson
 pip install -r requirements.txt
 ```
 
+`git-handson`ディレクトリ直下に、データのデフォルトの置き場である`data`ディレクトリを作成します
+
+```bash
+mkdir data
+```
+
 
 ## 使い方
 
