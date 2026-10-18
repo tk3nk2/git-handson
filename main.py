@@ -290,6 +290,11 @@ def sort(limit: Optional[int]=typer.Option(None, help="表示する件数")):
 def qr(
     id: int=typer.Argument(help="製造実績一覧の中から、指定したIDのproduct_codeをQRコードにして画面に表示します")
 ):
+    """
+    製造実績一覧の中から、指定したIDのproduct_codeをQRコードにして画面に表示します 
+
+    Example: python main.py qr 3
+    """
     data = load_dummy_production()
 
     for record in data:
