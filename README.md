@@ -146,6 +146,13 @@ python main.py sort
 python main.py sort --limit 10
 ```
 
+### `qr`: 製造実績の製品コードをQRコードで表示
+
+製造実績の中の指定したIDの製品コードをQRコードで表示します
+```bash
+python main.py qr 3
+```
+
 
 ## コマンド一覧
 
@@ -160,6 +167,7 @@ python main.py sort --limit 10
 | `generate` | ダミー製造実績を生成 |
 | `display` | 製造実績一覧を表示 |
 | `sort` | 製造実績を時間でソートして表示 |
+| `qr` | 製造実績の製品コードをQRコードで表示 |
 
 各コマンドの詳細は、`--help`で確認できます。
 
