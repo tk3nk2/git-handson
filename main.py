@@ -218,7 +218,7 @@ def generate(
     """
     ダミーの製造実績を生成し、JSONファイルに保存する
     
-    Example: python main.py generate --output "data/dummy_productions.json" --count 20
+    Example: python main.py generate --count 20
     """
     data = [production_record.production_record(i) for i in range(count)]
 
