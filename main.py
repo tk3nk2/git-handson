@@ -288,14 +288,15 @@ def sort(limit: Optional[int]=typer.Option(None, help="表示する件数")):
 
 @app.command()
 def qr(
-    id: int=typer.Argument(help="製造実績一覧の中から、指定したIDのproduct_codeをQRコードにして画面に表示します")
+    id: int=typer.Argument(help="製造実績一覧の中から、指定したIDのproduct_codeをQRコードにして画面に表示します"),
+    file: Path=typer.Option("data/dummy_productions.json", help="製造実績のファイルパス")
 ):
     """
     製造実績一覧の中から、指定したIDのproduct_codeをQRコードにして画面に表示します 
 
     Example: python main.py qr 3
     """
-    data = load_dummy_production()
+    data = load_dummy_production(file)
 
     for record in data:
         if record["record_id"] == id:
